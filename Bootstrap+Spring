@@ -1,0 +1,71 @@
+//Create a Spring Boot Application
+
+//First, we’ll need the spring-boot-starter-web dependency:
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <version>2.1.1.RELEASE</version>
+</dependency>
+
+//creating a Spring Boot Application
+
+@SpringBootApplication
+public class SpringBootRestApplication {
+ 
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootRestApplication.class, args);
+    }
+}
+
+
+//Next, for Java-based configuration of Spring beans, we need to create a config class and annotate it with @Configuration annotation:
+
+@Configuration
+public class WebConfig {
+ 
+}
+
+
+//Bootstrapping Using spring-webmvc
+
+//Maven Dependencies
+
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.0.0.RELEASE</version>
+</dependency>
+
+// Next, we’ll add the configuration class that has the @Configuration annotation:
+
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = "com.baeldung.controller")
+public class WebConfig {
+    
+}
+
+//Next, we need to add a class that implements the WebApplicationInitializer interface:
+
+public class AppInitializer implements WebApplicationInitializer {
+ 
+    @Override
+    public void onStartup(ServletContext container) throws ServletException {
+        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+        context.scan("com.baeldung");
+        container.addListener(new ContextLoaderListener(context));
+ 
+        ServletRegistration.Dynamic dispatcher = 
+          container.addServlet("mvc", new DispatcherServlet(context));
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("/");   
+    }
+}
+
+// XML Configuration
+
+<context:component-scan base-package="com.baeldung.controller" />
+<mvc:annotation-driven />
+
+
